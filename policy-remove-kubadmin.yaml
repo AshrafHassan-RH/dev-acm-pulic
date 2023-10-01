@@ -1,0 +1,35 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-remove-kubadmin
+  namespace: default
+  annotations:
+    policy.open-cluster-management.io/description: policy-remove-kubadmin
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-remove-kubeadmin
+        spec:
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                apiVersion: v1
+                kind: Secret
+                metadata:
+                  name: kubeadmin
+                  namespace: kube-system
+                type: Opaque
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: install-quay-placement
+  namespace: default
+spec:
+  clusterSets:
+    - default
+    - global

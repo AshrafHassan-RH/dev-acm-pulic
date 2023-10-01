@@ -1,0 +1,41 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: policy-configure-clusterlevel-rbac
+  namespace: default
+  annotations:
+    policy.open-cluster-management.io/description: policy-configure-clusterlevel-rbac
+spec:
+  disabled: false
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: policy-configure-clusterlevel
+        spec:
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: rbac.authorization.k8s.io/v1
+                kind: ClusterRoleBinding
+                metadata:
+                  name: cluster-admin-0
+                roleRef:
+                  name: cluster-admin
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                subjects:
+                  - name: devadmin
+                    apiGroup: rbac.authorization.k8s.io
+                    kind: User
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: install-quay-placement
+  namespace: default
+spec:
+  clusterSets:
+    - default
+    - global
